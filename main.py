@@ -19,7 +19,7 @@ from utils.FedAvg import FedAvg, RSCFed, FedAvg_tao, FedAvg_proto, FedAvg_rela
 from utils.FedNoRo import get_output, get_current_consistency_weight, DaAgg
 from utils.evaluations import globaltest, classtest
 from utils.feature_visual import tnse_Visual
-from utils.local_training_init_corr import LocalUpdate
+from utils.local_training import LocalUpdate
 from utils.options import args_parser
 from utils.utils import set_seed, set_output_files
 from utils.valloss_cal import valloss
