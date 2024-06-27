@@ -5,7 +5,7 @@ from numpy import where
 from sklearn.manifold import TSNE
 
 
-color_map = ['r', 'y', 'k', 'g', 'b', 'm', 'c', 'peru']  # 8个类，准备8种颜色
+color_map = ['r', 'y', 'k', 'g', 'b', 'm', 'c', 'peru'] 
 # color_map = ['r', 'g']
 
 
@@ -31,7 +31,6 @@ def tnse_Visual(data, label, rnd, title):
 
     print('Begining......')
 
-    # 调用t-SNE对高维的data进行降维，得到的2维的result_2D，shape=(samples,2)
     tsne_2D = TSNE(n_components=2, init='pca', random_state=0, perplexity=5)
     result_2D = tsne_2D.fit_transform(data)
 
