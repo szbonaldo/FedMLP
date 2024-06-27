@@ -82,7 +82,7 @@ class LocalUpdate(object):
                         negetive_class_list_client.append(i)
                         class_miss_loss.append(loss[:, i].clone().detach().cpu())
                 # print(self.class_pos_idx)
-                # print(self.class_neg_idx)   # 不是从小到大
+                # print(self.class_neg_idx)   
 
                 for i in range(len(item)):
                     for j in range(len(negetive_class_list_client)):
