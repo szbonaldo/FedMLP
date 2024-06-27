@@ -10,11 +10,8 @@ total_disease = [0]*14
 new_disease = [0]*14
 patients = 0
 with open(csv_path, 'r') as csv_file:
-    # 读取csv文件
     csv_reader = csv.reader(csv_file)
-    # 遍历每一行数据
     for row in csv_reader:
-        # 如果行满足特定条件，则将其写入新文件
         if count == 1:
             count += 1
             print(count)
