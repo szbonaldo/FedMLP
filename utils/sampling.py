@@ -26,7 +26,7 @@ def non_iid_dirichlet_sampling(y_train, num_classes, p, num_users, seed, alpha_d
         Phi[invalid_idx] = np.random.binomial(1, p, size=(len(invalid_idx), num_classes))
         n_classes_per_client = np.sum(Phi, axis=1)
     Psi = [list(np.where(Phi[:, j] == 1)[0]) for j in range(num_classes)]  # indicate the clients that choose each class
-    num_clients_per_class = np.array([len(x) for x in Psi])  # 每个类的客户端数量
+    num_clients_per_class = np.array([len(x) for x in Psi])  
     dict_users = {}
     for class_i in range(num_classes+1):
         # all_idxs = np.where(y_train == class_i)[0]
