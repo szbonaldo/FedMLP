@@ -22,24 +22,16 @@ def set_seed(seed):
 #     max_m_indices = [arr.index(value) for value in max_m_values]
 #     return max_m_indices
 def max_m_indices(lst, n):
-    # 获取列表中元素及其索引的列表
     elements_with_indices = list(enumerate(lst))
-    # 按元素值降序排序
     sorted_elements = sorted(elements_with_indices, key=lambda x: x[1], reverse=True)
-    # 选取前 n 个元素
     top_n_elements = sorted_elements[:n]
-    # 返回索引
     return [index for index, value in top_n_elements]
 
 
 def min_n_indices(lst, n):
-    # 获取列表中元素及其索引的列表
     elements_with_indices = list(enumerate(lst))
-    # 按元素值升序排序
     sorted_elements = sorted(elements_with_indices, key=lambda x: x[1])
-    # 选取前 n 个元素
     bottom_n_elements = sorted_elements[:n]
-    # 返回索引
     return [index for index, value in bottom_n_elements]
 # def min_n_indices(arr, n):
 #     min_n_values = heapq.nsmallest(n, arr)
@@ -72,7 +64,7 @@ def set_output_files(args):
     #     os.mkdir(tensorboard_dir)
     code_dir = os.path.join(exp_dir, 'code')
     if os.path.exists(code_dir):
-        shutil.rmtree(code_dir)  # 递归删除
+        shutil.rmtree(code_dir)
     os.mkdir(code_dir)
     # shutil.make_archives(code_dir, 'zip', base_dir='/home/szb/multilabel/')
 
