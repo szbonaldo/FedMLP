@@ -55,7 +55,6 @@ class LocalUpdate(object):
         self.confuse_matrix = torch.zeros((8, 8)).cuda()
 
     def find_rows(self, tensor, up, down):
-        # 将条件应用于每一行，并返回符合条件的行索引
         condition = torch.all(torch.logical_or(tensor > up, tensor < down), axis=1)
         row_indices = torch.where(condition)[0]
         return row_indices
@@ -752,14 +751,11 @@ class LocalUpdate(object):
                 # update teacher
                 state_dict1 = self.teacher_neg.state_dict()
                 state_dict2 = deepcopy(self.student).state_dict()
-                # 定义加权系数(时间平滑)
                 weight1 = 1 - 0.001
                 weight2 = 0.001
-                # 对模型参数进行加权
                 weighted_state_dict = {}
                 for name in state_dict1:
                     weighted_state_dict[name] = weight1 * state_dict1[name] + weight2 * state_dict2[name]
-                # 将加权参数加载到新模型中
                 self.teacher_neg.load_state_dict(weighted_state_dict)
                 self.teacher_neg = self.teacher_neg.to(self.args.device)
                 batch_loss.append(loss.item())
@@ -1012,10 +1008,10 @@ class LocalUpdate(object):
             # find train samples for each class
             idx = []    # [[negcls1], [negcls2]]
             idxss = []
-            feature = []    # 对应idx的feature[[negcls1], [negcls2]]
-            similarity = []     # 对应idx的sim：[[negcls1_sim], [negcls2_sim]]
-            clean_idx = []  # [[negcls1_idx的idx], [negcls2_idx的idx]]
-            noise_idx = []  # [[negcls1_idx的idx], [negcls2_idx的idx]]
+            feature = []    
+            similarity = []     
+            clean_idx = []  
+            noise_idx = []  
             label = []  # [[negcls1], [negcls2]]
             num_train = 0
             glob_model = deepcopy(net)
@@ -1052,7 +1048,7 @@ class LocalUpdate(object):
                     idx.append(class_idx[result_indices])
                     label.append(l[result_indices])
             t2 = time.time()
-            # print('feature_label_prepare_time: ', t2-t1)    # 究极耗时
+            # print('feature_label_prepare_time: ', t2-t1)    
             for i, cls in enumerate(negetive_class_list):
                 # sim = []
                 proto_0 = Prototype[2*cls]
@@ -1075,7 +1071,7 @@ class LocalUpdate(object):
                     # num_clean_cls = int(tao[cls] * len(clean_idx[i]))
                     # num_noise_cls = int(tao[cls] * len(noise_idx[i]))
                     num_train = num_train + num_noise_cls + num_clean_cls
-                    max_m_indices_list = np.array(max_m_indices(similarity[i], num_clean_cls))   # idx的idx
+                    max_m_indices_list = np.array(max_m_indices(similarity[i], num_clean_cls))   
                     min_n_indices_list = np.array(min_n_indices(similarity[i], num_noise_cls))
                     if len(max_m_indices_list) == 0 and len(max_m_indices_list) == 0:
                         negcls_clean_train_idx = []
@@ -1090,14 +1086,14 @@ class LocalUpdate(object):
                         negcls_clean_train_idx = np.array(idx[i])[max_m_indices_list].tolist()
                         negcls_noise_train_idx = np.array(idx[i])[min_n_indices_list].tolist()
                     self.traindata_idx.append(negcls_clean_train_idx)
-                    self.traindata_idx.append(negcls_noise_train_idx)  # 在整体dataset中的索引
+                    self.traindata_idx.append(negcls_noise_train_idx)  
             else:
                 for i, cls in enumerate(negetive_class_list):
                     print('cls', cls, 'tao: ', tao[cls])
                     num_clean_cls = int(1 * self.args.clean_threshold * len(clean_idx[i]))
                     num_noise_cls = int(1 * self.args.noise_threshold * len(noise_idx[i]))
                     num_train = num_train + num_noise_cls + num_clean_cls
-                    max_m_indices_list = np.array(max_m_indices(similarity[i], num_clean_cls))  # idx的idx
+                    max_m_indices_list = np.array(max_m_indices(similarity[i], num_clean_cls)) 
                     min_n_indices_list = np.array(min_n_indices(similarity[i], num_noise_cls))
 
                     if len(max_m_indices_list) == 0 and len(max_m_indices_list) == 0:
@@ -1113,15 +1109,15 @@ class LocalUpdate(object):
                         negcls_clean_train_idx = np.array(idx[i])[max_m_indices_list].tolist()
                         negcls_noise_train_idx = np.array(idx[i])[min_n_indices_list].tolist()
                     self.traindata_idx[2*i].extend(negcls_clean_train_idx)
-                    self.traindata_idx[2*i+1].extend(negcls_noise_train_idx)  # 在整体dataset中的索引
+                    self.traindata_idx[2*i+1].extend(negcls_noise_train_idx) 
 
             t4 = time.time()
             # print('traindata_split_time: ', t4 - t3)
 
-            for i, cls in enumerate(negetive_class_list):   # 如有必要，active class的loss weight也可以计算
+            for i, cls in enumerate(negetive_class_list):   
                 print('class: ', cls, 'clean_train_samples: ', len(self.traindata_idx[2*i]))
                 print('class: ', cls, 'noise_train_samples: ', len(self.traindata_idx[2 * i+1]))
-                self.class_num_list[cls] = len(self.traindata_idx[2 * i+1]) # try noro
+                self.class_num_list[cls] = len(self.traindata_idx[2 * i+1]) 
                 # if rnd % 10 == 0:
                 #     real_clean = 0
                 #     real_noise = 0
@@ -1145,7 +1141,7 @@ class LocalUpdate(object):
                 #                            real_noise / len(self.traindata_idx[2 * i + 1]), rnd)
                 #     writer1.add_scalar(f'clean_acc/client{self.client_id}/class{cls}', real_clean/len(self.traindata_idx[2*i]), rnd)
             t5 = time.time()
-            # print('acc_compute_time: ', t5 - t4)    # 耗时
+            # print('acc_compute_time: ', t5 - t4)   
             # train
             net.train()
             glob_model.eval()
@@ -1157,7 +1153,7 @@ class LocalUpdate(object):
             loss_w = self.loss_w
             for i, cls in enumerate(negetive_class_list):
                 if len(self.traindata_idx[2*i+1]) != 0:
-                    loss_w[cls] = len(self.traindata_idx[2*i]) / len(self.traindata_idx[2*i+1])  # 未标类loss权重为估计的0数/估计的1数
+                    loss_w[cls] = len(self.traindata_idx[2*i]) / len(self.traindata_idx[2*i+1])  
                 else:
                     loss_w[cls] = 5.0
             print(loss_w)
@@ -1255,7 +1251,7 @@ class LocalUpdate(object):
             net.cpu()
             self.optimizer.zero_grad()
             t7 = time.time()
-            print('local_test_proto_time: ', t7 - t6)   # 第二耗时
+            print('local_test_proto_time: ', t7 - t6)   
             return net.state_dict(), np.array(
                 epoch_loss).mean(), _, _, negetive_class_list, self.local_dataset.active_class_list, t, proto
 
@@ -1387,7 +1383,7 @@ class DatasetSplit_Mixup(Dataset):
             item = int(item / self.train_ratio)
         if item < len(self.clean_idxs): # clean sample mixup
             flag = 0
-            index = random.choice(self.clean_idxs)  # 随机选择一个未标类属性相同的样本
+            index = random.choice(self.clean_idxs)  
             sample1 = deepcopy(self.dataset[self.clean_idxs[item]])
             sample2 = deepcopy(self.dataset[index])
             for i in range(len(sample1['target'])):
@@ -1397,7 +1393,7 @@ class DatasetSplit_Mixup(Dataset):
             mixed_x, lam = self.mixup_data(sample1["image_aug_1"], sample2["image_aug_1"])
         else:   # noise sample mixup
             flag = 1
-            index = random.choice(self.noise_idxs)  # 随机选择一个未标类属性相同的样本
+            index = random.choice(self.noise_idxs)  
             sample1 = self.dataset[self.noise_idxs[item - len(self.clean_idxs)]]
             sample2 = self.dataset[index]
             for i in range(len(sample1['target'])):
