@@ -38,19 +38,14 @@ def globaltest(net, test_dataset, args):
     logging.info(np.sum(all_preds, axis=0))
     logging.info(np.sum(all_labels, axis=0))
 
-    # 初始化用于存储每个标签的AP的列表
     APs = []
 
-    # 循环计算每个标签的AP
     for label_index in range(all_labels.shape[1]):
         true_labels = all_labels[:, label_index]
         predicted_scores = all_probs[:, label_index]
-
-        # 计算平均精度（Average Precision）并添加到列表中
         ap = average_precision_score(true_labels, predicted_scores)
         APs.append(ap)
 
-    # 计算mAP
     mAP = torch.tensor(APs).mean()
 
     bacc = BACC(all_labels, all_preds)
@@ -61,7 +56,7 @@ def globaltest(net, test_dataset, args):
     colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF', '#FF00FF', '#000000', '#808080', '#C0C0C0', '#800000',
               '#008000', '#000080', '#808000', '#008080']
     # print(all_probs)
-    for i in range(len(all_labels.T)):    # 有问题，已修改，应该按照每一类平均而不是每个样本
+    for i in range(len(all_labels.T)): 
         fpr, tpr, th = roc_curve(all_labels.T[i], all_probs.T[i], pos_label=1)
         # ROCprint(fpr, tpr, i, colors[i])
         auroc += auc(fpr, tpr)
@@ -124,7 +119,7 @@ def classtest(net, test_dataset, args, classid):
     colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF', '#FF00FF', '#000000', '#808080', '#C0C0C0', '#800000',
               '#008000', '#000080', '#808000', '#008080']
     # print(all_probs)
-    # for i in range(len(all_labels.T)):    # 有问题，已修改，应该按照每一类平均而不是每个样本
+    # for i in range(len(all_labels.T)): 
     #     fpr, tpr, th = roc_curve(all_labels.T[i], all_probs.T[i], pos_label=1)
     #     # ROCprint(fpr, tpr, i, colors[i])
     #     auroc += auc(fpr, tpr)
