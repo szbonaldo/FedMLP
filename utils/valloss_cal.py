@@ -15,17 +15,13 @@ def get_num_of_each_class(args, num_samples_to_split, test_dataset):
 def valloss(net, test_dataset, args):
     net.eval()
     test_loader = DataLoader(dataset=test_dataset, batch_size=args.batch_size*4, shuffle=False, num_workers=4)
-    # 定义要划分的样本比例（例如，划分出20%的样本）
     split_ratio = 0.1
 
-    # 计算划分的数量
     num_samples = len(test_loader.dataset)
     num_samples_to_split = int(num_samples * split_ratio)
 
-    # 创建一个随机采样器，用于划分样本
     random_sampler = SubsetRandomSampler(range(num_samples_to_split))
 
-    # 创建一个新的dataloader，其中包含随机划分的样本
     val_data_loader = DataLoader(
         dataset=test_loader.dataset,
         batch_size=args.batch_size*4,
