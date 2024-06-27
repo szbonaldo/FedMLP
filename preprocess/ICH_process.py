@@ -33,9 +33,7 @@ count = 1
 title = ['Image Index', 'epidural', 'intraparenchymal', 'intraventricular', 'subarachnoid', 'subdural']
 with open(csv_path, 'w', newline='') as new_csv_file:
     csv_writer = csv.writer(new_csv_file)
-    # 遍历每一行数据
     for i in tqdm(range(len(ID_have)+1)):
-        # 如果行满足特定条件，则将其写入新文件
         if count == 1:
             csv_writer.writerow(title)
             count += 1
