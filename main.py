@@ -60,7 +60,7 @@ if __name__ == '__main__':
     for i in range(args.n_classes):
         class_pos_idx_1.append(row_idx_1[where(column_idx_1 == i)[0]])
 
-    p_pos_1 = 0.  # 保留的pos比例
+    p_pos_1 = 0.
     class_neg_idx_1 = []
     for i in range(args.n_classes):
         class_neg_idx_1.append(np.random.choice(class_pos_idx_1[i], int((1-p_pos_1)*len(class_pos_idx_1[i])), replace=False))   # list(array, ...)
@@ -86,7 +86,7 @@ if __name__ == '__main__':
             set_seed(int(run))
             netclass = build_model(args)
             logging.info(f"\n===============================> beging, run: {run} <===============================\n")
-            w_class_fl = []  # 每个类一个聚合模型
+            w_class_fl = []  
             active_class_list = []  # [, , , , ]
             negetive_class_list = []    # [, , , , ]
             class_active_client_list = []
@@ -119,10 +119,10 @@ if __name__ == '__main__':
                         random_numbers = random.sample(range(args.n_clients), K)
                         DMA.append(random_numbers)
                     print('DMA: ', DMA)
-                if args.exp == 'RoFL':
-                    if len(forget_rate_schedule) > 0:
-                        args.forget_rate = forget_rate_schedule[rnd]
-                        logging.info('remember_rate: %f' % (1-args.forget_rate))
+                # if args.exp == 'RoFL':
+                #     if len(forget_rate_schedule) > 0:
+                #         args.forget_rate = forget_rate_schedule[rnd]
+                #         logging.info('remember_rate: %f' % (1-args.forget_rate))
                 # if args.exp == 'FedNoRo' and rnd >= args.rounds_FedNoRo_warmup:
                 if args.exp == 'FedNoRo':
                     weight_kd = get_current_consistency_weight(rnd, args.begin, args.end) * args.a
@@ -164,8 +164,8 @@ if __name__ == '__main__':
                     if args.exp == 'RSCFed':
                         w_local, loss_local, loss_false_negetive, loss_true_negetive, negetive_class_list_client, active_class_list_client = local.train_RSCFed(rnd,
                             net=deepcopy(netglob).to(args.device))
-                    if args.exp == 'RoFL':
-                        w_local, loss_local, f_k = local.train_RoFL(deepcopy(netglob).to(args.device), deepcopy(f_G).to(args.device), rnd)
+                    # if args.exp == 'RoFL':
+                    #     w_local, loss_local, f_k = local.train_RoFL(deepcopy(netglob).to(args.device), deepcopy(f_G).to(args.device), rnd)
                     if args.exp == 'FedIRM':
                         if rnd < args.rounds_FedIRM_sup - 1:
                             w_local, loss_local, loss_false_negetive, loss_true_negetive, negetive_class_list_client, active_class_list_client = local.train_FedIRM(
@@ -231,7 +231,7 @@ if __name__ == '__main__':
                             Prototype = FedAvg_proto(Prototypes, dict_len, class_active_client_list)
                         else:
                             lam = 1.0
-                            Prototype = (1-lam)*Prototype + lam*FedAvg_proto(Prototypes, dict_len, class_active_client_list)    # 可以更新平缓一点
+                            Prototype = (1-lam)*Prototype + lam*FedAvg_proto(Prototypes, dict_len, class_active_client_list) 
                         print('rnd: ', rnd, 'ok')
                     if (rnd + 1) % 10 == 0 and run == 0:
                         torch.save(netglob.state_dict(), models_dir + f'/model_warmup_globdistill_0.3_0.1_{rnd}.pth')
@@ -248,24 +248,24 @@ if __name__ == '__main__':
                             print(Prototype)
                         else:
                             lam = 1.0
-                            Prototype = (1-lam)*Prototype + lam*FedAvg_rela(Prototypes, dict_len, class_active_client_list)    # 可以更新平缓一点
+                            Prototype = (1-lam)*Prototype + lam*FedAvg_rela(Prototypes, dict_len, class_active_client_list)   
                         print('rnd: ', rnd, 'ok')
-                elif args.exp == 'RoFL':
-                    w_glob_fl = FedAvg(w_locals, dict_len)
-                    netglob.load_state_dict(deepcopy(w_glob_fl))
-                    sim = torch.nn.CosineSimilarity(dim=1)
-                    tmp = 0
-                    w_sum = 0
-                    for i in f_locals:
-                        sim_weight = sim(f_G, i).reshape(2*args.n_classes, 1)
-                        w_sum += sim_weight
-                        tmp += sim_weight * i
-                        # print(sim_weight)
-                        # print(i)
-                    for i in range(len(w_sum)):
-                        if w_sum[i, 0] == 0:
-                            w_sum[i, 0] = 1
-                    f_G = torch.div(tmp, w_sum)
+                # elif args.exp == 'RoFL':
+                #     w_glob_fl = FedAvg(w_locals, dict_len)
+                #     netglob.load_state_dict(deepcopy(w_glob_fl))
+                #     sim = torch.nn.CosineSimilarity(dim=1)
+                #     tmp = 0
+                #     w_sum = 0
+                #     for i in f_locals:
+                #         sim_weight = sim(f_G, i).reshape(2*args.n_classes, 1)
+                #         w_sum += sim_weight
+                #         tmp += sim_weight * i
+                #         # print(sim_weight)
+                #         # print(i)
+                #     for i in range(len(w_sum)):
+                #         if w_sum[i, 0] == 0:
+                #             w_sum[i, 0] = 1
+                #     f_G = torch.div(tmp, w_sum)
                 elif args.exp == 'FedNoRo':
                     if rnd < args.rounds_FedNoRo_warmup:
                         w_glob_fl = FedAvg(w_locals, dict_len)
