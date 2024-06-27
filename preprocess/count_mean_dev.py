@@ -7,7 +7,7 @@ from dataset.all_dataset import ChestXray14
 def getStat(train_data):
     '''
     Compute mean and variance for training data
-    :param train_data: 自定义类Dataset(或ImageFolder即可)
+    :param train_data
     :return: (mean, std)
     '''
     print('Compute mean and variance for training data.')
