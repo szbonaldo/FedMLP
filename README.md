@@ -28,6 +28,14 @@ We recommend using conda to setup the environment, See the `requirements.txt` fo
 
 ## Citation
 If this repository is useful for your research, please consider citing:
+```shell
+@article{sun2024fedmlp,
+  title={FedMLP: Federated Multi-Label Medical Image Classification under Task Heterogeneity},
+  author={Sun, Zhaobin and Wu, Nannan and Shi, Junjie and Yu, Li and Yang, Xin and Cheng, Kwang-Ting and Yan, Zengqiang},
+  journal={arXiv preprint arXiv:2406.18995},
+  year={2024}
+}
+```
 
 
 ## Contact
